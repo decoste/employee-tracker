@@ -139,16 +139,23 @@ inquirer
         name: "roleId",
     },
     {
-        type: "input",
-        message: "What is the employee's manager_id?",
-        name: "managerId",
+        name: 'confirm',
+        type: 'confirm',
+        message: "Does this employee has a manager?"
     },
+    {
+        name: 'managerId',
+        type: 'input',
+        message: "What is the manager id?",
+        when: answer => answer.confirm === true
+    }
 ])
 .then(function (answer) {
     connection.query('INSERT INTO employee SET ?', {
         first_name: answer.first,
         last_name: answer.last,
-        role_id: answer.roleId
+        role_id: answer.roleId,
+        manager_id: answer.managerId
     }, function (err, res) {
         viewEmployee(connection);
         if (err) throw err;
