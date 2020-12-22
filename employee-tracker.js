@@ -24,9 +24,12 @@ function runSerach(connection) {
                 case "View Departments, Roles, Or Employees":
                     view(connection);
                     break;
-                    case "Add Departments, Roles, OR Employees":
-                        add(connection);
-                        break;
+                case "Add Departments, Roles, OR Employees":
+                    add(connection);
+                    break;
+                case "Update Departments, Roles, OR Employees":
+                    update(connection);
+                    break;
                 default:
                     connection.end();
             }
@@ -34,33 +37,33 @@ function runSerach(connection) {
 
 }
 
-function view(connection){
+function view(connection) {
     inquirer
-    .prompt([
-        {
-            type: "list",
-            message: "What would you like view?",
-            name: "action",
-            choices: ["Departments",
-                "Roles",
-                "Employees"
-            ]
-        }])
-    .then(function (answer) {
-        switch (answer.action) {
-            case "Departments":
-                viewDebartment(connection);
-                break;
+        .prompt([
+            {
+                type: "list",
+                message: "What would you like view?",
+                name: "action",
+                choices: ["Departments",
+                    "Roles",
+                    "Employees"
+                ]
+            }])
+        .then(function (answer) {
+            switch (answer.action) {
+                case "Departments":
+                    viewDebartment(connection);
+                    break;
                 case "Roles":
-                viewRole(connection);
-                break;
+                    viewRole(connection);
+                    break;
                 case "Employees":
                     viewEmployee(connection);
                     break;
-            default:
-                connection.end();
-        }
-    });
+                default:
+                    connection.end();
+            }
+        });
 
 
 }
@@ -96,7 +99,7 @@ function add(connection) {
                 message: "What would you like to add?",
                 name: "action",
                 choices: ["Department",
-                  "Role",
+                    "Role",
                     "Employee"
                 ]
             }])
@@ -105,12 +108,12 @@ function add(connection) {
                 case "Department":
                     addDepartment(connection);
                     break;
-                    case "Role":
-                        addRole(connection);
-                        break;
-                        case "Employee":
-                            addEmployee(connection);
-                            break;
+                case "Role":
+                    addRole(connection);
+                    break;
+                case "Employee":
+                    addEmployee(connection);
+                    break;
                 default:
                     connection.end();
             }
@@ -119,113 +122,192 @@ function add(connection) {
 
 }
 
-function addEmployee(connection){
-    
-inquirer
-.prompt([
-    {
-        type: "input",
-        message: "What is the employee's first name?",
-        name: "first",
-    },
-    {
-        type: "input",
-        message: "What is the employee's last name?",
-        name: "last",
-    },
-    {
-        type: "input",
-        message: "What is the employee's role_id?",
-        name: "roleId",
-    },
-    {
-        name: 'confirm',
-        type: 'confirm',
-        message: "Does this employee has a manager?"
-    },
-    {
-        name: 'managerId',
-        type: 'input',
-        message: "What is the manager id?",
-        when: answer => answer.confirm === true
-    }
-])
-.then(function (answer) {
-    connection.query('INSERT INTO employee SET ?', {
-        first_name: answer.first,
-        last_name: answer.last,
-        role_id: answer.roleId,
-        manager_id: answer.managerId
-    }, function (err, res) {
-        viewEmployee(connection);
-        if (err) throw err;
-        console.table(res);
-        runSerach(connection);
-    });
+function addEmployee(connection) {
 
-});
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                message: "What is the employee's first name?",
+                name: "first",
+            },
+            {
+                type: "input",
+                message: "What is the employee's last name?",
+                name: "last",
+            },
+            {
+                type: "input",
+                message: "What is the employee's role_id?",
+                name: "roleId",
+            },
+            {
+                name: 'confirm',
+                type: 'confirm',
+                message: "Does this employee has a manager?"
+            },
+            {
+                name: 'managerId',
+                type: 'input',
+                message: "What is the manager id?",
+                when: answer => answer.confirm === true
+            }
+        ])
+        .then(function (answer) {
+            connection.query('INSERT INTO employee SET ?', {
+                first_name: answer.first,
+                last_name: answer.last,
+                role_id: answer.roleId,
+                manager_id: answer.managerId
+            }, function (err, res) {
+                viewEmployee(connection);
+                if (err) throw err;
+                console.table(res);
+                runSerach(connection);
+            });
 
- 
+        });
+
+
 }
 
 
-function addRole(connection){
+function addRole(connection) {
     inquirer
-    .prompt([
-        {
-            type: "input",
-            message: "What is the title?",
-            name: "title",
-        },
-        {
-            type: "input",
-            message: "What is the salary?",
-            name: "salary",
-        },
-        {
-            type: "input",
-            message: "What is the department_id?",
-            name: "departmentId",
-        }
-    ])
-    .then(function (answer) {
-        connection.query('INSERT INTO role SET ?', {
-            title: answer.title,
-            salary: answer.salary,
-            department_id: answer.departmentId
-        }, function (err, res) {
-            viewRole(connection);
-            if (err) throw err;
-            console.table(res);
-            runSerach(connection);
+        .prompt([
+            {
+                type: "input",
+                message: "What is the title?",
+                name: "title",
+            },
+            {
+                type: "input",
+                message: "What is the salary?",
+                name: "salary",
+            },
+            {
+                type: "input",
+                message: "What is the department_id?",
+                name: "departmentId",
+            }
+        ])
+        .then(function (answer) {
+            connection.query('INSERT INTO role SET ?', {
+                title: answer.title,
+                salary: answer.salary,
+                department_id: answer.departmentId
+            }, function (err, res) {
+                viewRole(connection);
+                if (err) throw err;
+                console.table(res);
+                runSerach(connection);
+            });
+
         });
-    
-    });
-    
-     
-    }  
-    
-function addDepartment(connection){
-    inquirer
-    .prompt([
-        {
-            type: "input",
-            message: "What is the department's name?",
-            name: "name"
-        }
-    ])
-    .then(function (answer) {
-        connection.query('INSERT INTO department SET ?', {
-            name: answer.name,
-        }, function (err, res) {
-            viewDebartment(connection);
-            if (err) throw err;
-            console.table(res);
-            runSerach(connection);
-        });
-    
-    });
-    }    
 
 
+}
+
+function addDepartment(connection) {
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                message: "What is the department's name?",
+                name: "name"
+            }
+        ])
+        .then(function (answer) {
+            connection.query('INSERT INTO department SET ?', {
+                name: answer.name,
+            }, function (err, res) {
+                viewDebartment(connection);
+                if (err) throw err;
+                console.table(res);
+                runSerach(connection);
+            });
+
+        });
+}
+
+
+function update(connection) {
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                message: "What would you like to update?",
+                name: "action",
+                choices: ["Employee role",
+                    "Employee manager"
+                ]
+            }])
+        .then(function (answer) {
+            switch (answer.action) {
+                case "Employee role":
+                    updateRole(connection);
+                    break;
+                case "Employee manager":
+                    updateManager(connection);
+                    break;
+                default:
+                    connection.end();
+            }
+        });
+
+
+}
+
+
+function updateRole(connection) {
+    connection.query("SELECT * FROM employee LEFT JOIN role ON employee.id = role.id",
+        function (err, result) {
+            const joinedArray = [];
+            if (err) throw err;
+            inquirer
+                .prompt([
+                    {
+                        name: "choice",
+                        type: "list",
+                        choices: function () {
+                            for (let i = 0; i < result.length; i++) {
+                                let emp = result[i].id
+                                    + ", " + result[i].first_name
+                                    + " " + result[i].last_name
+                                    + ", " + result[i].title
+                                    + ", " + result[i].role_id
+                                joinedArray.push(emp);
+                            }
+                            return joinedArray;
+                        },
+                        message: "which employee you would like to change their role?",
+                    },
+                    {
+                        name: "title",
+                        type: "input",
+                        message: "What is the employee new role?",
+                    },
+                    {
+                        name: "roleId",
+                        type: "input",
+                        message: "What is the employee role Id?",
+                    },
+                ]).then(function (answer) {
+                    connection.query('UPDATE employee LEFT JOIN role ON employee.id = role.id SET ? WHERE ?',
+                           [{
+                                title: answer.title
+                            },
+                            {
+                                role_id: answer.roleId
+                            }]
+                        , function (err, res) {
+                            viewRole(connection);
+                            if (err) throw err;
+                            console.table(res);
+                            runSerach(connection);
+                        });
+                        
+                });
+        });
+}
 module.exports = { runSerach };
