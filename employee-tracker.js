@@ -248,7 +248,7 @@ function update(connection) {
                     updateRole(connection);
                     break;
                 case "Employee manager":
-                    updateManager(connection);
+                    updateEmpManager(connection);
                     break;
                 default:
                     connection.end();
@@ -309,5 +309,73 @@ function updateRole(connection) {
                         
                 });
         });
+}
+
+
+function updateEmpManager(connection) {
+    connection.query("SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id FROM employee left JOIN employee as emp ON employee.id = emp.manager_id",
+    function (err, result) {
+        const empArray = [];
+        if (err) throw err;
+            inquirer
+                .prompt([
+                    {
+                        name: "choice",
+                        type: "list",
+                        choices: function () {
+                            for (let i = 0; i < result.length; i++) {
+                                let emp ="Id_" + result[i].id
+                                    + ", " + result[i].first_name
+                                    + " " + result[i].last_name
+                                    + ", " + result[i].manager_id +"(ManagerId)"
+                                empArray.push(emp);
+                            }
+                            return empArray;
+                        },
+                        message: "Which employee you would like to update their manager?",
+                    },
+                    
+                    {
+                        name: "empId",
+                        type: "input",
+                        message: "Enter the employee Id?",
+                    },
+                    {
+                        name: "array",
+                        type: "list",
+                        choices: function () {
+                            for (let i = 0; i < result.length; i++) {
+                                let emp ="Id_" + result[i].id
+                                    + ", " + result[i].first_name
+                                    + " " + result[i].last_name
+                                    + ", " + result[i].manager_id +"(ManagerId)"
+                                empArray.push(emp);
+                            }
+                            return empArray;
+                        },
+                        message: "Who is the new manager?",
+                    },
+                    {
+                        name: "managerId",
+                        type: "input",
+                        message: "Enter employee_Id for the new manager?",
+                    },
+                ]).then(function (answer) {
+                    connection.query("UPDATE employee SET ? WHERE ?",
+                           [{
+                                manager_id: answer.managerId
+                            },
+                            {
+                                id: answer.empId
+                            }]
+                        , function (err, res) {
+                            viewEmployee(connection);
+                            if (err) throw err;
+                            console.table(res);
+                            runSerach(connection);
+                        });
+                        
+                });
+            });
 }
 module.exports = { runSerach };
