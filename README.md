@@ -1,1 +1,3 @@
 # employee-tracker
+
+I finished the homework + 2 of the bonus.  I just need to add README info, and gif video today .......
