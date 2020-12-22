@@ -30,6 +30,9 @@ function runSerach(connection) {
                 case "Update Departments, Roles, OR Employees":
                     update(connection);
                     break;
+                    case "Delete Departments, Roles, Employees":
+                        deleteData(connection);
+                        break;
                 default:
                     connection.end();
             }
@@ -370,6 +373,161 @@ function updateEmpManager(connection) {
                             }]
                         , function (err, res) {
                             viewEmployee(connection);
+                            if (err) throw err;
+                            console.table(res);
+                            runSerach(connection);
+                        });
+                        
+                });
+            });
+}
+function deleteData(connection) {
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                message: "What would you like delete?",
+                name: "action",
+                choices: ["Departments",
+                    "Roles",
+                    "Employees"
+                ]
+            }])
+        .then(function (answer) {
+            switch (answer.action) {
+                case "Departments":
+                    deleteDebartment(connection);
+                    break;
+                case "Roles":
+                    deleteRole(connection);
+                    break;
+                case "Employees":
+                    deleteEmployee(connection);
+                    break;
+                default:
+                    connection.end();
+            }
+        });
+
+
+}
+
+
+function deleteEmployee(connection) {
+    connection.query("SELECT employee.id, employee.first_name, employee.last_name from employee",
+    function (err, result) {
+        const empArray = [];
+        if (err) throw err;
+            inquirer
+                .prompt([
+                    {
+                        name: "choice",
+                        type: "list",
+                        choices: function () {
+                            for (let i = 0; i < result.length; i++) {
+                                let emp ="Id_" + result[i].id
+                                    + ", " + result[i].first_name
+                                    + " " + result[i].last_name
+                                empArray.push(emp);
+                            }
+                            return empArray;
+                        },
+                        message: "Which employee you would like to delete?",
+                    },
+                    {
+                        name: "empId",
+                        type: "input",
+                        message: "Enter the employee Id?",
+                    }
+                ]).then(function (answer) {
+                    connection.query("DELETE FROM  employee WHERE ?",
+                            {
+                                id: answer.empId
+                            }
+                        , function (err, res) {
+                            viewEmployee(connection);
+                            if (err) throw err;
+                            console.table(res);
+                            runSerach(connection);
+                        });
+                        
+                });
+            });
+}
+
+function deleteDebartment(connection) {
+    connection.query("SELECT department.id, department.name from department",
+    function (err, result) {
+        const empArray = [];
+        if (err) throw err;
+            inquirer
+                .prompt([
+                    {
+                        name: "choice",
+                        type: "list",
+                        choices: function () {
+                            for (let i = 0; i < result.length; i++) {
+                                let emp ="Id_" + result[i].id
+                                    + ", " + result[i].name
+                                empArray.push(emp);
+                            }
+                            return empArray;
+                        },
+                        message: "Which department you would like to delete?",
+                    },
+                    {
+                        name: "depId",
+                        type: "input",
+                        message: "Enter the department Id?",
+                    }
+                ]).then(function (answer) {
+                    connection.query("DELETE FROM department WHERE ?",
+                            {
+                                id: answer.depId
+                            }
+                        , function (err, res) {
+                            viewDebartment(connection);
+                            if (err) throw err;
+                            console.table(res);
+                            runSerach(connection);
+                        });
+                        
+                });
+            });
+}
+
+function deleteRole(connection) {
+    connection.query("SELECT role.id, role.title from role",
+    function (err, result) {
+        const empArray = [];
+        if (err) throw err;
+            inquirer
+                .prompt([
+                    {
+                        name: "choice",
+                        type: "list",
+                        choices: function () {
+                            for (let i = 0; i < result.length; i++) {
+                                let emp ="Id_" + result[i].id
+                                    + ", " + result[i].title
+                                empArray.push(emp);
+                            }
+                            return empArray;
+                        },
+                        message: "Which role you would like to delete?",
+                    },
+                    {
+                        name: "roleId",
+                        type: "input",
+                        message: "Enter the role Id?",
+                    }
+                ]).then(function (answer) {
+                    connection.query("DELETE FROM role WHERE ?",
+                            {
+                                id: answer.roleId
+                            }
+                        , function (err, res) {
+                            viewRole(connection);
                             if (err) throw err;
                             console.table(res);
                             runSerach(connection);
