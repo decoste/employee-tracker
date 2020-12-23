@@ -5,8 +5,20 @@ const employee = require("./Develop/lib/Employee");
 const Department = require("./Develop/lib/Department");
 var connection = require('./server');
 require("console.table");
+var figlet = require('figlet');
+ 
+    
+figlet('EMPLOYEE TRACKER', function(err, data) {
+    if (err) {
+        console.log('Something went wrong...');
+        console.dir(err);
+        return;
+    }
+    console.log(data)
+});
 
 function runSerach(connection) {
+
     inquirer
         .prompt([
             {
@@ -166,7 +178,6 @@ function addEmployee(connection) {
                 viewEmployee(connection);
                 if (err) throw err;
                 console.table(res);
-                runSerach(connection);
             });
 
         });
@@ -203,7 +214,6 @@ function addRole(connection) {
                 viewRole(connection);
                 if (err) throw err;
                 console.table(res);
-                runSerach(connection);
             });
 
         });
@@ -227,7 +237,6 @@ function addDepartment(connection) {
                 viewDebartment(connection);
                 if (err) throw err;
                 console.table(res);
-                runSerach(connection);
             });
 
         });
@@ -307,7 +316,6 @@ function updateRole(connection) {
                             viewRole(connection);
                             if (err) throw err;
                             console.table(res);
-                            runSerach(connection);
                         });
                         
                 });
@@ -375,7 +383,6 @@ function updateEmpManager(connection) {
                             viewEmployee(connection);
                             if (err) throw err;
                             console.table(res);
-                            runSerach(connection);
                         });
                         
                 });
@@ -411,8 +418,6 @@ function deleteData(connection) {
 
 
 }
-
-
 function deleteEmployee(connection) {
     connection.query("SELECT employee.id, employee.first_name, employee.last_name from employee",
     function (err, result) {
@@ -448,9 +453,7 @@ function deleteEmployee(connection) {
                             viewEmployee(connection);
                             if (err) throw err;
                             console.table(res);
-                            runSerach(connection);
-                        });
-                        
+                        });   
                 });
             });
 }
@@ -489,7 +492,6 @@ function deleteDebartment(connection) {
                             viewDebartment(connection);
                             if (err) throw err;
                             console.table(res);
-                            runSerach(connection);
                         });
                         
                 });
@@ -530,12 +532,10 @@ function deleteRole(connection) {
                             viewRole(connection);
                             if (err) throw err;
                             console.table(res);
-                            runSerach(connection);
                         });
                         
                 });
             });
 }
-
 
 module.exports = { runSerach };
